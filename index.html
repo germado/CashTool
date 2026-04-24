@@ -160,7 +160,7 @@ function login() {
   const p = document.getElementById("password").value;
 
   if (u === USER && p === PASS) {
-    localStorage.setItem("loggedIn", "true");
+sessionStorage.setItem("loginTime", Date.now());
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("app").style.display = "flex";
   } else {
@@ -168,13 +168,22 @@ function login() {
   }
 }
 
-/* AUTO LOGIN */
-window.onload = function () {
-  if (localStorage.getItem("loggedIn") === "true") {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("app").style.display = "flex";
+/* NO AUTO LOGIN */
+setInterval(() => {
+  const loginTime = sessionStorage.getItem("loginTime");
+
+  if (!loginTime) return;
+
+  const now = Date.now();
+  const diff = now - loginTime;
+
+  const limit = 15 * 60 * 1000; // 15 minutes
+
+  if (diff > limit) {
+    sessionStorage.clear();
+    location.reload(); // force login again
   }
-};
+}, 5000); // check every 5s
 </script>
 
 </body>
