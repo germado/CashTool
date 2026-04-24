@@ -9,144 +9,69 @@
 <link rel="icon" href="icon.png">
 
 <style>
-* { transition: all 0.25s ease; }
+*{transition:.25s}
+body{margin:0;font-family:Inter;background:#f8fafc;display:flex}
 
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background:#f8fafc;
-  display:flex;
-}
-
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar{
   width:240px;
   background:rgba(255,255,255,0.7);
-  backdrop-filter: blur(10px);
+  backdrop-filter:blur(10px);
   border-right:1px solid #e5e7eb;
   padding:20px;
   height:100vh;
 }
- 
-#app {
-  opacity: 0;
-}
-
-#app.show {
-  opacity: 1;
-}
 .menu-item{
-  padding:12px;
-  border-radius:12px;
-  cursor:pointer;
-  margin-bottom:10px;
-  display:flex;
-  gap:8px;
+  padding:12px;border-radius:12px;cursor:pointer;margin-bottom:10px;
 }
+.menu-item.active{background:#84cc16;color:white}
+.menu-item:hover{background:#f3f4f6}
 
-.menu-item:hover{ background:#f3f4f6; }
-.menu-item.active{ background:#84cc16; color:white; }
-
-/* ===== MAIN ===== */
-.main{ flex:1; padding:30px; }
-.tool{ display:none; }
-.tool.active{ display:block; }
+/* MAIN */
+.main{flex:1;padding:30px}
+.tool{display:none}
+.tool.active{display:block}
 
 iframe{
-  width:100%;
-  height:90vh;
-  border:none;
-  border-radius:16px;
-  background:white;
-  box-shadow:0 20px 40px rgba(0,0,0,0.05);
+  width:100%;height:90vh;border:none;border-radius:16px;
+  box-shadow:0 20px 40px rgba(0,0,0,.05)
 }
 
-/* ===== LOGIN ===== */
+/* LOGIN */
 #loginScreen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
   background:linear-gradient(135deg,#f8fafc,#e5e7eb);
-  animation: fadeIn .5s;
 }
-
 .login-card{
-  background:rgba(255,255,255,0.7);
-  backdrop-filter: blur(20px);
-  padding:30px;
-  border-radius:20px;
-  border:1px solid #e5e7eb;
-  width:320px;
-  text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,0.08);
-  animation: scaleIn .4s;
-}
-
-@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
-@keyframes scaleIn{ from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
-
-/* SHAKE */
-.shake{ animation:shake .3s; }
-@keyframes shake{
-  0%{transform:translateX(0)}
-  25%{transform:translateX(-5px)}
-  50%{transform:translateX(5px)}
-  75%{transform:translateX(-5px)}
-  100%{transform:translateX(0)}
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(20px);
+  padding:30px;border-radius:20px;
+  width:320px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.08);
 }
 
 input{
-box-sizing: border-box; 
-  width:100%;
-  padding:14px;
-  margin:8px 0;
-  border-radius:12px;
-  border:1px solid #e5e7eb;
+  width:100%;padding:14px;margin:8px 0;
+  border-radius:12px;border:1px solid #e5e7eb;
 }
-
 button{
-  width:100%;
-  padding:14px;
-  border-radius:30px;
-  border:none;
-  background:#84cc16;
-  color:white;
-  cursor:pointer;
+  width:100%;padding:14px;border-radius:30px;
+  border:none;background:#84cc16;color:white;cursor:pointer;
 }
-
-/* SPINNER */
-.spinner{
-  width:16px;
-  height:16px;
-  border:2px solid white;
-  border-top:2px solid transparent;
-  border-radius:50%;
-  display:inline-block;
-  margin-left:8px;
-  animation:spin .6s linear infinite;
-}
-@keyframes spin{ to{transform:rotate(360deg)} }
 
 /* FOOTER */
 .footer{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  text-align:center;
-  padding:10px;
-  font-size:12px;
-  background:rgba(255,255,255,0.7);
-  backdrop-filter: blur(10px);
+  position:fixed;bottom:0;width:100%;
+  text-align:center;padding:10px;font-size:12px;
+  background:rgba(255,255,255,.7);
 }
 
 /* MOBILE */
 @media(max-width:768px){
-  body{flex-direction:column;}
-  .sidebar{width:100%;display:flex;overflow-x:auto;}
-  .menu-item{flex:1;justify-content:center;}
+  body{flex-direction:column}
+  .sidebar{width:100%;display:flex;overflow-x:auto}
+  .menu-item{flex:1;text-align:center}
 }
 </style>
 </head>
@@ -156,33 +81,28 @@ button{
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
-    <h2>Welcome</h2>
+    <h2>Login</h2>
 
-    <input id="username" placeholder="Username">
-
-    <div style="position:relative;">
-      <input id="password" type="password" placeholder="Password">
-      <span onclick="togglePass()" style="
-        position:absolute;
-        right:12px;
-        top:50%;
-        transform:translateY(-50%);
-        cursor:pointer;">👁</span>
-    </div>
+    <input id="username" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
     <button id="loginBtn" onclick="login()">Login</button>
-    <div id="error" style="color:red;font-size:12px;margin-top:10px;"></div>
+    <div id="error" style="color:red;font-size:12px;"></div>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none; width:100%;">
-  
+<div id="app" style="display:none;width:100%;">
+
+<div style="display:flex">
+
 <div class="sidebar">
   <div class="menu-item active" onclick="show('proxy',this)">📡 Proxy</div>
   <div class="menu-item" onclick="show('auth',this)">🔐 2FA</div>
   <div class="menu-item" onclick="show('phone',this)">📞 Phone</div>
   <div class="menu-item" onclick="show('paypal',this)">💳 PayPal</div>
+
+  <div class="menu-item" onclick="logout()">🚪 Logout</div>
 </div>
 
 <div class="main">
@@ -193,22 +113,76 @@ button{
 </div>
 
 </div>
+</div>
 
 <div class="footer">Built by DraQing • © 2026</div>
 
-<script>
+<!-- FIREBASE (YOUR VERSION FIXED) -->
+<script type="module">
 
-document.getElementById("app").classList.add("show");
-/* ENTER LOGIN */
-document.addEventListener("keydown", e=>{
-  if(e.key==="Enter") login();
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+/* YOUR CONFIG (unchanged) */
+const firebaseConfig = {
+  apiKey: "AIzaSyAx4ll0Pb51oWxrroGSk-odIVzBq3zpJI4",
+  authDomain: "cashtool-e5fbf.firebaseapp.com",
+  projectId: "cashtool-e5fbf",
+  storageBucket: "cashtool-e5fbf.firebasestorage.app",
+  messagingSenderId: "453853626540",
+  appId: "1:453853626540:web:d8bb5eb9bf31b3e2cfdf09",
+  measurementId: "G-MYJ0CQYYVL"
+};
+
+const app = initializeApp(firebaseConfig);
+getAnalytics(app);
+
+const auth = getAuth(app);
+
+/* LOGIN */
+window.login = function () {
+  const email = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const error = document.getElementById("error");
+  const btn = document.getElementById("loginBtn");
+
+  btn.innerHTML = "Logging in...";
+  btn.disabled = true;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .catch(err => {
+      error.textContent = err.message;
+      btn.innerHTML = "Login";
+      btn.disabled = false;
+    });
+};
+
+/* AUTO LOGIN */
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  }
 });
 
-/* PASSWORD TOGGLE */
-function togglePass(){
-  const p=document.getElementById("password");
-  p.type=p.type==="password"?"text":"password";
-}
+/* LOGOUT */
+window.logout = function () {
+  signOut(auth);
+};
+
+</script>
+
+<script>
+/* ENTER KEY LOGIN */
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") login();
+});
 
 /* NAV */
 function show(id,el){
@@ -217,42 +191,6 @@ function show(id,el){
 
   document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));
   el.classList.add('active');
-}
-
-/* LOAD USERNAME */
-window.addEventListener("load",()=>{
-  const saved=localStorage.getItem("lastUser");
-  if(saved) username.value=saved;
-});
-
-/* LOGIN */
-const USER="Agadir", PASS="Agadir";
-
-function login(){
-  const u=username.value, p=password.value;
-  const btn=document.getElementById("loginBtn");
-  const card=document.querySelector(".login-card");
-
-  if(u!==USER||p!==PASS){
-    error.textContent="Wrong credentials";
-    card.classList.add("shake");
-    setTimeout(()=>card.classList.remove("shake"),300);
-    return;
-  }
-
-  localStorage.setItem("lastUser",u);
-
-  btn.innerHTML="Logging in...";
-  btn.disabled=true;
-
-  const sp=document.createElement("span");
-  sp.className="spinner";
-  btn.appendChild(sp);
-
-  setTimeout(()=>{
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("app").style.display="flex";
-  },1500);
 }
 </script>
 
