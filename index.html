@@ -2,69 +2,79 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Tools Dashboard</title>
+<title>CashTool Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" href="icon.png">
 
 <style>
-*{transition:.25s}
-body{margin:0;font-family:Inter;background:#f8fafc;display:flex}
+*{box-sizing:border-box;font-family:Inter;margin:0;transition:.25s}
+body{background:#f8fafc;display:flex}
 
 /* SIDEBAR */
 .sidebar{
-  width:240px;
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(10px);
-  border-right:1px solid #e5e7eb;
-  padding:20px;
-  height:100vh;
+  width:240px;background:#fff;border-right:1px solid #eee;
+  padding:20px;height:100vh;
 }
 .menu-item{
   padding:12px;border-radius:12px;cursor:pointer;margin-bottom:10px;
 }
-.menu-item.active{background:#84cc16;color:white}
+.menu-item.active{background:#84cc16;color:#fff}
 .menu-item:hover{background:#f3f4f6}
 
 /* MAIN */
 .main{flex:1;padding:30px}
 .tool{display:none}
 .tool.active{display:block}
+iframe{width:100%;height:90vh;border:none;border-radius:16px}
 
-iframe{
-  width:100%;height:90vh;border:none;border-radius:16px;
-  box-shadow:0 20px 40px rgba(0,0,0,.05)
-}
-
-/* LOGIN */
+/* LOGIN SCREEN */
 #loginScreen{
-  position:fixed;inset:0;
-  display:flex;align-items:center;justify-content:center;
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(135deg,#f8fafc,#e5e7eb);
 }
+
+/* CARD */
 .login-card{
-  background:rgba(255,255,255,.7);
-  backdrop-filter:blur(20px);
-  padding:30px;border-radius:20px;
-  width:320px;text-align:center;
+  width:340px;background:#fff;padding:30px;border-radius:20px;
   box-shadow:0 20px 60px rgba(0,0,0,.08);
 }
 
-input{
-  width:100%;padding:14px;margin:8px 0;
-  border-radius:12px;border:1px solid #e5e7eb;
+/* TABS */
+.tabs{
+  display:flex;margin-bottom:20px;background:#f1f5f9;border-radius:12px;
 }
+.tab{
+  flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;
+}
+.tab.active{background:#84cc16;color:#fff}
+
+/* INPUT */
+input{
+  width:100%;padding:14px;margin-bottom:12px;
+  border-radius:12px;border:1px solid #e5e7eb;
+  outline:none;
+}
+input:focus{
+  border-color:#84cc16;
+  box-shadow:0 0 0 2px rgba(132,204,22,.2);
+}
+
+/* BUTTON */
 button{
-  width:100%;padding:14px;border-radius:30px;
-  border:none;background:#84cc16;color:white;cursor:pointer;
+  width:100%;padding:14px;border-radius:30px;border:none;
+  background:#84cc16;color:#fff;font-weight:500;cursor:pointer;
+}
+
+/* LINKS */
+.link{
+  font-size:13px;color:#84cc16;cursor:pointer;text-align:center;margin-top:10px;
 }
 
 /* FOOTER */
 .footer{
   position:fixed;bottom:0;width:100%;
-  text-align:center;padding:10px;font-size:12px;
-  background:rgba(255,255,255,.7);
+  text-align:center;padding:10px;font-size:12px;color:#555;
 }
 
 /* MOBILE */
@@ -81,28 +91,34 @@ button{
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
-    <h2>Login</h2>
 
-    <input id="username" placeholder="Email">
+    <div class="tabs">
+      <div class="tab active" onclick="setMode('login')" id="tabLogin">Login</div>
+      <div class="tab" onclick="setMode('register')" id="tabRegister">Register</div>
+    </div>
+
+    <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
 
-    <button id="loginBtn" onclick="login()">Login</button>
-    <div id="error" style="color:red;font-size:12px;"></div>
+    <button id="actionBtn">Login</button>
+
+    <div class="link" onclick="resetPassword()">Forgot password?</div>
+
+    <div id="error" style="color:red;font-size:12px;margin-top:8px;"></div>
+
   </div>
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none;width:100%;">
-
+<div id="app" style="display:none;width:100%">
 <div style="display:flex">
 
 <div class="sidebar">
-  <div class="menu-item active" onclick="show('proxy',this)">📡 Proxy</div>
-  <div class="menu-item" onclick="show('auth',this)">🔐 2FA</div>
-  <div class="menu-item" onclick="show('phone',this)">📞 Phone</div>
-  <div class="menu-item" onclick="show('paypal',this)">💳 PayPal</div>
-
-  <div class="menu-item" onclick="logout()">🚪 Logout</div>
+  <div class="menu-item active" onclick="show('proxy',this)">Proxy</div>
+  <div class="menu-item" onclick="show('auth',this)">2FA</div>
+  <div class="menu-item" onclick="show('phone',this)">Phone</div>
+  <div class="menu-item" onclick="show('paypal',this)">PayPal</div>
+  <div class="menu-item" onclick="logout()">Logout</div>
 </div>
 
 <div class="main">
@@ -117,74 +133,79 @@ button{
 
 <div class="footer">Built by DraQing • © 2026</div>
 
-<!-- FIREBASE (YOUR VERSION FIXED) -->
+<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
 import {
   getAuth,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-/* YOUR CONFIG (unchanged) */
+/* YOUR CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAx4ll0Pb51oWxrroGSk-odIVzBq3zpJI4",
   authDomain: "cashtool-e5fbf.firebaseapp.com",
   projectId: "cashtool-e5fbf",
-  storageBucket: "cashtool-e5fbf.firebasestorage.app",
-  messagingSenderId: "453853626540",
-  appId: "1:453853626540:web:d8bb5eb9bf31b3e2cfdf09",
-  measurementId: "G-MYJ0CQYYVL"
+  appId: "1:453853626540:web:d8bb5eb9bf31b3e2cfdf09"
 };
 
 const app = initializeApp(firebaseConfig);
-getAnalytics(app);
-
 const auth = getAuth(app);
 
-/* LOGIN */
-window.login = function () {
-  const email = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const error = document.getElementById("error");
-  const btn = document.getElementById("loginBtn");
+let mode = "login";
 
-  btn.innerHTML = "Logging in...";
-  btn.disabled = true;
+/* MODE SWITCH */
+window.setMode = function(m){
+  mode = m;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .catch(err => {
-      error.textContent = err.message;
-      btn.innerHTML = "Login";
-      btn.disabled = false;
-    });
+  tabLogin.classList.toggle("active", m==="login");
+  tabRegister.classList.toggle("active", m==="register");
+
+  actionBtn.textContent = m==="login" ? "Login" : "Create Account";
+};
+
+/* BUTTON ACTION */
+actionBtn.onclick = () => {
+  const emailVal = email.value;
+  const passVal = password.value;
+
+  if(mode==="login"){
+    signInWithEmailAndPassword(auth,emailVal,passVal)
+      .catch(e=>error.textContent=e.message);
+  } else {
+    createUserWithEmailAndPassword(auth,emailVal,passVal)
+      .catch(e=>error.textContent=e.message);
+  }
+};
+
+/* RESET */
+window.resetPassword = function(){
+  sendPasswordResetEmail(auth,email.value)
+    .then(()=>alert("Reset email sent"))
+    .catch(e=>error.textContent=e.message);
 };
 
 /* AUTO LOGIN */
-onAuthStateChanged(auth, user => {
-  if (user) {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("app").style.display = "block";
+onAuthStateChanged(auth,user=>{
+  if(user){
+    loginScreen.style.display="none";
+    app.style.display="block";
   }
 });
 
 /* LOGOUT */
-window.logout = function () {
-  signOut(auth);
+window.logout = function(){
+  signOut(auth).then(()=>location.reload());
 };
 
 </script>
 
 <script>
-/* ENTER KEY LOGIN */
-document.addEventListener("keydown", e => {
-  if (e.key === "Enter") login();
-});
-
-/* NAV */
 function show(id,el){
   document.querySelectorAll('.tool').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
