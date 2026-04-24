@@ -27,7 +27,14 @@ body{
   padding:20px;
   height:100vh;
 }
+ 
+#app {
+  opacity: 0;
+}
 
+#app.show {
+  opacity: 1;
+}
 .menu-item{
   padding:12px;
   border-radius:12px;
@@ -168,8 +175,8 @@ button{
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none;width:100%;display:flex;">
-
+<div id="app" style="display:none; width:100%;">
+  
 <div class="sidebar">
   <div class="menu-item active" onclick="show('proxy',this)">📡 Proxy</div>
   <div class="menu-item" onclick="show('auth',this)">🔐 2FA</div>
@@ -190,6 +197,7 @@ button{
 
 <script>
 
+document.getElementById("app").classList.add("show");
 /* ENTER LOGIN */
 document.addEventListener("keydown", e=>{
   if(e.key==="Enter") login();
