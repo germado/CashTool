@@ -3,12 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <title>Tools Dashboard</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="icon.png">
 
 <style>
 
+  * {
+  transition: all 0.2s ease;
+}
+  .footer {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #6b7280;
+}
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+  }
+
+  .menu-item {
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  iframe {
+    height: 80vh;
+  }
+}
 input { box-sizing: border-box; }
 body{
   margin:0;
@@ -79,6 +117,17 @@ iframe{
 
 <body>
 
+  <div id="loader" style="
+position:fixed;
+inset:0;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;">
+Loading...
+</div>
+
 <!-- ✅ LOGIN SCREEN -->
 <div id="loginScreen" style="
   position:fixed;
@@ -142,15 +191,33 @@ iframe{
 
 </div>
 
+
+  <div class="footer">
+  Built by DraQing • © 2026 • All rights reserved
+</div>
+
+  
 <script>
+
+  window.addEventListener("load", () => {
+  document.getElementById("loader").style.display = "none";
+});
 function show(id,el){
   document.querySelectorAll('.tool').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
   document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));
   el.classList.add('active');
+
+  localStorage.setItem("lastTool", id);
 }
 
+  window.onload = function () {
+  const last = localStorage.getItem("lastTool");
+  if (last) {
+    document.getElementById(last).classList.add("active");
+  }
+};
 /* LOGIN */
 const USER = "Agadir";
 const PASS = "Agadir";
