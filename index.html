@@ -8,6 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+#app {
+  opacity: 0;
+}
+
+#app.show {
+  opacity: 1;
+}
 *{box-sizing:border-box;font-family:Inter;margin:0;transition:.25s}
 body{background:#f8fafc;display:flex}
 
@@ -110,8 +117,7 @@ button{
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none;width:100%">
-<div style="display:flex">
+<div id="app" style="display:none;width:100%; display:flex;">
 
 <div class="sidebar">
   <div class="menu-item active" onclick="show('proxy',this)">Proxy</div>
@@ -194,7 +200,7 @@ window.resetPassword = function(){
 onAuthStateChanged(auth,user=>{
   if(user){
     loginScreen.style.display="none";
-    app.style.display="block";
+    app.style.display="flex";
   }
 });
 
@@ -206,6 +212,8 @@ window.logout = function(){
 </script>
 
 <script>
+
+  app.classList.add("show");
 function show(id,el){
   document.querySelectorAll('.tool').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
