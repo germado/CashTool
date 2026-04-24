@@ -7,38 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="icon.png">
 <style>
-
-
-  <div id="loginScreen" style="
-  position:fixed;
-  inset:0;
-  background:#f8fafc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-">
-
-  <div style="
-    background:white;
-    padding:25px;
-    border-radius:16px;
-    border:1px solid #e5e7eb;
-    width:300px;
-    text-align:center;
-  ">
-    <h3>Login</h3>
-
-    <input id="username" placeholder="Username" style="width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #e5e7eb;">
-    <input id="password" type="password" placeholder="Password" style="width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #e5e7eb;">
-
-    <button onclick="login()" style="width:100%;padding:12px;border-radius:20px;background:#84cc16;color:white;border:none;">Login</button>
-
-    <div id="error" style="color:red;font-size:12px;margin-top:10px;"></div>
-  </div>
-</div>
-
-  
 body{
   margin:0;
   font-family:'Inter',sans-serif;
@@ -105,6 +73,35 @@ iframe{
 }
 </style>
 </head>
+
+    <div id="loginScreen" style="
+  position:fixed;
+  inset:0;
+  background:#f8fafc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+">
+
+  <div style="
+    background:white;
+    padding:25px;
+    border-radius:16px;
+    border:1px solid #e5e7eb;
+    width:300px;
+    text-align:center;
+  ">
+    <h3>Login</h3>
+
+    <input id="username" placeholder="Username" style="width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #e5e7eb;">
+    <input id="password" type="password" placeholder="Password" style="width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #e5e7eb;">
+
+    <button onclick="login()" style="width:100%;padding:12px;border-radius:20px;background:#84cc16;color:white;border:none;">Login</button>
+
+    <div id="error" style="color:red;font-size:12px;margin-top:10px;"></div>
+  </div>
+</div>
 
 <body>
 
