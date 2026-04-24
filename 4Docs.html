@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple PayPal Seller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#f8fafc;
+  display:flex;
+  justify-content:center;
+  padding:60px 20px;
+}
+
+.box{
+  background:white;
+  padding:25px;
+  border-radius:16px;
+  border:1px solid #e5e7eb;
+  width:100%;
+  max-width:400px;
+  text-align:center;
+}
+
+h2{
+  margin-bottom:20px;
+  font-weight:500;
+  color:#374151;
+}
+
+select:focus {
+  border-color: #84cc16;
+  box-shadow: 0 0 0 2px rgba(132, 204, 22, 0.2);
+}
+input{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+}
+
+/* BUTTON MATCHES YOUR OTHER TOOLS */
+button{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border-radius:30px;
+  border:none;
+  background:#84cc16;
+  color:white;
+  font-weight:500;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#65a30d;
+}
+
+
+
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-selected {
+  padding: 14px;
+  border-radius: 30px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* arrow */
+.arrow {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #6b7280;
+  border-bottom: 2px solid #6b7280;
+  transform: rotate(45deg);
+  transition: .2s;
+}
+
+/* dropdown list */
+.dropdown-list {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  margin-top: 6px;
+  display: none;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  z-index: 10;
+}
+
+/* items */
+.dropdown-item {
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+/* HOVER LIKE YOUR IMAGE */
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+.dropdown-list {
+  z-index: 9999; /* VERY IMPORTANT */
+}
+
+.box {
+  overflow: visible !important;
+}
+
+.dropdown-selected.active {
+  border-color: #84cc16;
+  box-shadow: 0 0 0 2px rgba(132, 204, 22, 0.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>PayPal Payment</h2>
+
+  <input type="email" id="email" placeholder="PayPal Email" required>
+  <input type="text" id="product" placeholder="Product Name" required>
+  <input type="number" id="price" placeholder="Price" step="0.01" required>
+<div class="dropdown">
+  <div class="dropdown-selected" onclick="toggleDropdown()">
+    <span id="selectedText">USD - US Dollar</span>
+    <span class="arrow"></span>
+  </div>
+
+  <div class="dropdown-list" id="dropdownList">
+    <div class="dropdown-item" onclick="selectOption('USD - US Dollar','USD')">USD - US Dollar</div>
+    <div class="dropdown-item" onclick="selectOption('EUR - Euro','EUR')">EUR - Euro</div>
+    <div class="dropdown-item" onclick="selectOption('GBP - British Pound','GBP')">GBP - Pound</div>
+    <div class="dropdown-item" onclick="selectOption('CAD - Canadian Dollar','CAD')">CAD - Dollar</div>
+    <div class="dropdown-item" onclick="selectOption('AUD - Australian Dollar','AUD')">AUD - Dollar</div>
+  </div>
+</div>
+
+<!-- keep your hidden select (IMPORTANT for logic) -->
+<select id="currency" style="display:none;">
+  <option value="USD">USD</option>
+  <option value="EUR">EUR</option>
+  <option value="GBP">GBP</option>
+  <option value="CAD">CAD</option>
+  <option value="AUD">AUD</option>
+</select>
+
+<form id="paypalForm"
+      action="https://www.paypal.com/cgi-bin/webscr"
+      method="post"
+      target="_top">
+
+  <input type="hidden" name="business" id="pp_email">
+  <input type="hidden" name="cmd" value="_xclick">
+  <input type="hidden" name="item_name" id="pp_product">
+  <input type="hidden" name="amount" id="pp_price">
+  <input type="hidden" name="currency_code" id="pp_currency">
+
+  <button id="payBtn" type="submit">Buy Now</button>
+</form>
+</div>
+
+<script>
+/* ===== ELEMENTS ===== */
+const form = document.getElementById("paypalForm");
+const email = document.getElementById("email");
+const product = document.getElementById("product");
+const price = document.getElementById("price");
+
+const dropdown = document.getElementById("dropdownList");
+const selectedText = document.getElementById("selectedText");
+const hiddenSelect = document.getElementById("currency");
+const dropdownBox = document.querySelector(".dropdown-selected");
+
+const btn = document.getElementById("payBtn");
+
+/* ===== DROPDOWN ===== */
+
+function toggleDropdown() {
+  const isOpen = dropdown.style.display === "block";
+  dropdown.style.display = isOpen ? "none" : "block";
+  dropdownBox.classList.toggle("active", !isOpen);
+}
+
+function selectOption(text, value) {
+  selectedText.textContent = text;
+  hiddenSelect.value = value;
+  dropdown.style.display = "none";
+  dropdownBox.classList.remove("active");
+}
+
+/* CLOSE OUTSIDE */
+document.addEventListener("click", function(e) {
+  if (!e.target.closest(".dropdown")) {
+    dropdown.style.display = "none";
+    dropdownBox.classList.remove("active");
+  }
+});
+
+/* ===== FORM SUBMIT ===== */
+
+form.addEventListener("submit", function(e) {
+
+  /* VALIDATION */
+  if (!email.value || !product.value || !price.value) {
+    e.preventDefault();
+    alert("Please fill all fields");
+    return;
+  }
+
+  /* SET VALUES */
+  document.getElementById("pp_email").value = email.value;
+  document.getElementById("pp_product").value = product.value;
+  document.getElementById("pp_price").value = price.value;
+  document.getElementById("pp_currency").value = hiddenSelect.value;
+
+  /* LOADING STATE */
+  btn.textContent = "Redirecting...";
+  btn.disabled = true;
+});
+</script>
+
+</body>
+</html>

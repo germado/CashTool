@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>2FA Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f8fafc;
+  display: flex;
+  justify-content: center;
+  padding: 80px 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+h2 {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 25px;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  margin-bottom: 12px;
+  outline: none;
+}
+
+/* BUTTON */
+button.main {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  background: #84cc16;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
+
+button.main:hover {
+  background: #65a30d;
+}
+
+/* CODE BOX */
+.code-box {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  animation: fadeIn .4s ease;
+}
+
+.code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.code {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-align: center;
+  width: 100%;
+}
+
+/* COPY BUTTON */
+.copy-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn:hover {
+  background: #f3f4f6;
+}
+
+/* TIMER */
+.timer {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* PROGRESS BAR */
+.progress {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #22c55e;
+  width: 0%;
+  transition: width 1s linear;
+}
+
+/* FEEDBACK */
+.copied {
+  font-size: 12px;
+  color: #16a34a;
+  margin-top: 8px;
+  height: 14px;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <h2>Secure 2FA Code Generator</h2>
+
+  <input id="secret" placeholder="Enter your 2FA secret key">
+
+  <button class="main" onclick="start()">Generate Code</button>
+
+  <div class="code-box">
+    <div class="code-row">
+      <div class="code" id="code">------</div>
+
+      <button class="copy-btn" onclick="copyCode()">
+        📋
+      </button>
+    </div>
+
+    <div class="copied" id="copied"></div>
+
+    <div class="timer" id="timer">-- seconds</div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="error" id="error"></div>
+  </div>
+
+</div>
+
+<script>
+let interval = null;
+
+function base32ToBytes(base32) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  base32 = base32.replace(/=+$/, '').toUpperCase();
+
+  let bits = "";
+  for (let char of base32) {
+    const val = alphabet.indexOf(char);
+    if (val === -1) throw new Error("Invalid Base32 character");
+    bits += val.toString(2).padStart(5, '0');
+  }
+
+  const bytes = [];
+  for (let i = 0; i + 8 <= bits.length; i += 8) {
+    bytes.push(parseInt(bits.substring(i, i + 8), 2));
+  }
+
+  return new Uint8Array(bytes);
+}
+
+async function generateTOTP(secretBytes) {
+  const epoch = Math.floor(Date.now() / 1000);
+  const timeStep = Math.floor(epoch / 30);
+
+  const buffer = new ArrayBuffer(8);
+  const view = new DataView(buffer);
+  view.setUint32(4, timeStep);
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    secretBytes,
+    { name: "HMAC", hash: "SHA-1" },
+    false,
+    ["sign"]
+  );
+
+  const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", key, buffer));
+
+  const offset = hmac[hmac.length - 1] & 0x0f;
+  const code =
+    ((hmac[offset] & 0x7f) << 24) |
+    ((hmac[offset + 1] & 0xff) << 16) |
+    ((hmac[offset + 2] & 0xff) << 8) |
+    (hmac[offset + 3] & 0xff);
+
+  return (code % 1000000).toString().padStart(6, '0');
+}
+
+function copyCode() {
+  const code = document.getElementById("code").textContent;
+  if (!code || code.includes("-")) return;
+
+  navigator.clipboard.writeText(code);
+  const el = document.getElementById("copied");
+  el.textContent = "Copied!";
+  setTimeout(() => el.textContent = "", 1500);
+}
+
+function start() {
+  const input = document.getElementById("secret").value;
+  const cleaned = input.replace(/\s+/g, '');
+
+  clearInterval(interval);
+  document.getElementById("error").textContent = "";
+
+  let secretBytes;
+
+  try {
+    secretBytes = base32ToBytes(cleaned);
+  } catch (e) {
+    document.getElementById("error").textContent = "Invalid Base32 secret";
+    return;
+  }
+
+  async function update() {
+    const now = Math.floor(Date.now() / 1000);
+    const remaining = 30 - (now % 30);
+
+    document.getElementById("timer").textContent = remaining + " seconds";
+
+    const progressPercent = ((30 - remaining) / 30) * 100;
+    document.getElementById("progress").style.width = progressPercent + "%";
+
+    const code = await generateTOTP(secretBytes);
+    document.getElementById("code").textContent = code;
+  }
+
+  update();
+  interval = setInterval(update, 1000);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phone Number Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #111827;
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 30px;
+      color: #374151;
+    }
+
+    .top-bar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    select {
+      padding: 14px 16px;
+      border-radius: 30px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      font-size: 14px;
+      min-width: 260px;
+      outline: none;
+    }
+
+    .generate {
+      padding: 14px 28px;
+      border-radius: 30px;
+      border: none;
+      background: #84cc16;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .generate:hover {
+      background: #65a30d;
+    }
+
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #16a34a;
+    }
+
+    .output {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .row {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .number {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .copy-btn {
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .copy-btn:hover {
+      background: #f3f4f6;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Global phone numbers at your fingertips. Create them in seconds.</h1>
+
+    <div class="top-bar">
+      <select id="countrySelect"></select>
+      <button class="generate" onclick="generateNumber()">Generate</button>
+    </div>
+
+    <div class="badges">
+      <span>✔ Instant Results</span>
+      <span>✔ Works Worldwide</span>
+      <span>✔ Safe & Secure</span>
+    </div>
+
+    <div class="output" id="output"></div>
+
+  </div>
+
+<script>
+const countries = [
+  { name: 'Mexico', code: '+52', length: 10 },
+  { name: 'Spain', code: '+34', length: 9 },
+  { name: 'France', code: '+33', length: 10 },
+  { name: 'Chile', code: '+56', length: 9 },
+  { name: 'Argentina', code: '+54', length: 10 },
+  { name: 'Brazil', code: '+55', length: 11 },
+  { name: 'Colombia', code: '+57', length: 10 },
+  { name: 'Peru', code: '+51', length: 9 },
+  { name: 'Venezuela', code: '+58', length: 10 },
+  { name: 'Ecuador', code: '+593', length: 9 },
+  { name: 'Bolivia', code: '+591', length: 8 },
+  { name: 'Paraguay', code: '+595', length: 9 },
+  { name: 'Uruguay', code: '+598', length: 8 },
+  { name: 'Costa Rica', code: '+506', length: 8 },
+  { name: 'Panama', code: '+507', length: 8 },
+  { name: 'Guatemala', code: '+502', length: 8 },
+  { name: 'Honduras', code: '+504', length: 8 },
+  { name: 'El Salvador', code: '+503', length: 8 },
+  { name: 'Nicaragua', code: '+505', length: 8 },
+  { name: 'Sweden', code: '+46', length: 9 },
+  { name: 'Switzerland', code: '+41', length: 9 },
+  { name: 'United States', code: '+1', length: 10 },
+  { name: 'Japan', code: '+81', length: 10 }
+];
+
+const select = document.getElementById('countrySelect');
+
+countries.forEach((c, i) => {
+  const option = document.createElement('option');
+  option.value = i;
+  option.textContent = `${c.name} (${c.code})`;
+  select.appendChild(option);
+});
+
+function randomDigits(length) {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += Math.floor(Math.random() * 10);
+  }
+  return result;
+}
+
+function generateNumber() {
+  const index = select.value;
+  const country = countries[index];
+
+  const local = randomDigits(country.length);
+  const fullDisplay = `${country.code} ${local}`;
+  const fullCopy = `${country.code}${local}`;
+
+  const row = document.createElement('div');
+  row.className = 'row';
+
+  const number = document.createElement('div');
+  number.className = 'number';
+  number.textContent = fullDisplay;
+
+  const buttons = document.createElement('div');
+  buttons.className = 'buttons';
+
+  const copyFull = document.createElement('button');
+  copyFull.className = 'copy-btn';
+  copyFull.textContent = 'Copy Full';
+  copyFull.onclick = () => copy(fullCopy, copyFull, 'Copy Full');
+
+  const copyLocal = document.createElement('button');
+  copyLocal.className = 'copy-btn';
+  copyLocal.textContent = 'Copy Without Code';
+  copyLocal.onclick = () => copy(local, copyLocal, 'Copy Without Code');
+
+  buttons.appendChild(copyFull);
+  buttons.appendChild(copyLocal);
+
+  row.appendChild(number);
+  row.appendChild(buttons);
+
+  document.getElementById('output').prepend(row);
+}
+
+function copy(text, btn, label) {
+  navigator.clipboard.writeText(text);
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = label, 1000);
+}
+</script>
+
+</body>
+</html>
