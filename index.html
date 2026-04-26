@@ -9,6 +9,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+
+.logout {
+  margin-top: auto;
+  background: #ef4444;
+  color: white;
+}
+
+.logout:hover {
+  background: #dc2626;
+}
 *{box-sizing:border-box;font-family:Inter;margin:0;transition:.25s}
 body{background:#f8fafc;display:flex}
 
@@ -16,6 +26,9 @@ body{background:#f8fafc;display:flex}
 .sidebar{
   width:240px;background:#fff;border-right:1px solid #eee;
   padding:20px;height:100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .menu-item{
   padding:12px;border-radius:12px;cursor:pointer;margin-bottom:10px;
@@ -102,11 +115,15 @@ button{
 <div id="app" style="display:none;width:100%;flex-direction:row">
 
   <div class="sidebar">
+    <div>
     <div class="menu-item active" onclick="show('proxy',this)">Proxy</div>
     <div class="menu-item" onclick="show('auth',this)">2FA</div>
     <div class="menu-item" onclick="show('phone',this)">Phone</div>
     <div class="menu-item" onclick="show('paypal',this)">PayPal</div>
-    <div class="menu-item" onclick="logout()">Logout</div>
+  </div>
+  <!-- LOGOUT AT BOTTOM -->
+  <div class="menu-item logout" onclick="logout()">🚪 Logout</div>
+
   </div>
 
   <div class="main">
